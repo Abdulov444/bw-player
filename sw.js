@@ -1,5 +1,6 @@
-// Simple offline-first SW for BW Player
-const CACHE = 'bw-cache-v1';
+// sw.js — минимальный, безопасный кэш
+const CACHE = 'bw-cache-v1'; // меняй v1 → v2 при каждом релизе
+
 const ASSETS = [
   './',
   './index.html',
@@ -8,37 +9,24 @@ const ASSETS = [
   './icons/bw-512.png'
 ];
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting())
+self.addEventListener('install', (event) => {
+  self.skipWaiting(); // сразу активируем новую версию
+  event.waitUntil(
+    caches.open(CACHE).then((cache) => cache.addAll(ASSETS))
   );
 });
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.map(k => k===CACHE ? null : caches.delete(k)))),
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-self.addEventListener('fetch', (e) => {
-  const req = e.request;
-  // Network-first for HTML, cache-first for others
-  if (req.mode === 'navigate') {
-    e.respondWith(
-      fetch(req).then(res => {
-        const copy = res.clone();
-        caches.open(CACHE).then(c => c.put('./', copy));
-        return res;
-      }).catch(() => caches.match('./'))
-    );
-  } else {
-    e.respondWith(
-      caches.match(req).then(cached => cached || fetch(req).then(res => {
-        const copy = res.clone();
-        caches.open(CACHE).then(c => c.put(req, copy));
-        return res;
-      }))
-    );
-  }
+// Простой cache-first: если файла нет в кэше — берём из сети (и он подтянется уже свежим)
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((cached) => cached || fetch(event.request))
+  );
 });
