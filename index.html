@@ -5,19 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Bleeding Wounds — Player</title>
 <meta name="theme-color" content="#0b0b0d"/>
-<link rel="manifest" href="manifest.webmanifest?v=5">
+<link rel="manifest" href="manifest.webmanifest?v=7">
 <link rel="icon" href="icons/bw-192.png" sizes="192x192">
 <link rel="icon" href="icons/bw-512.png" sizes="512x512">
+
 <style>
-:root{--bg:#0b0b0d;--panel:#0f0f12;--muted:#1a1a20;--line:#24242b;--text:#f2f2f7;--sub:#b9b9c4;--accent:#d3162f;--accent2:#8f0f22}
+:root{--bg:#0b0b0d;--panel:#0f0f12;--muted:#1a1a20;--line:#24242b;--text:#f2f2f7;--sub:#b9b9c4;--accent:#d3162f;--accent2:#8f0f22;--good:#1fb980}
 *{box-sizing:border-box} html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Inter,Segoe UI,Roboto,Arial,sans-serif}
 .container{max-width:920px;margin:0 auto;padding:14px}
 .header{display:flex;gap:12px;align-items:center;justify-content:space-between}
 .brand{display:flex;gap:10px;align-items:center}
-.logo{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),#3b0d14)}
+.logo{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),#3b0d14);font-weight:800}
 .title h1{margin:0;font-size:18px;font-weight:800}
 .title p{margin:2px 0 0;color:var(--sub);font-size:12px}
+.kv{display:flex;gap:8px;align-items:center}
 
 /* tabs */
 .tabs{margin:12px 0;display:flex;gap:8px;overflow:auto;padding-bottom:6px}
@@ -29,30 +31,62 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .card h2{margin:0;padding:12px 14px;background:linear-gradient(180deg,#131318,#0e0e12);border-bottom:1px solid var(--line);font-size:14px;text-transform:uppercase;letter-spacing:.5px}
 .body{padding:12px}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.row > *{min-width:120px}
-input[type=text],textarea,select{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--text);outline:none}
+.row>*{min-width:120px}
+input[type=text],textarea,select,input[type=password]{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--text);outline:none}
 textarea{min-height:72px;resize:vertical}
 .btn{border:0;border-radius:12px;padding:10px 14px;color:#fff;background:linear-gradient(180deg,var(--accent),var(--accent2));cursor:pointer}
-.btn.muted{background:linear-gradient(180deg,#1c1c22,#121216);color:#cbd; border:1px solid var(--line)}
+.btn.muted{background:linear-gradient(180deg,#1c1c22,#121216);color:#cbd;border:1px solid var(--line)}
 .btn.ghost{background:transparent;color:#cbd;border:1px dashed var(--line)}
+.btn.good{background:linear-gradient(180deg,#2ad18b,#13a368);color:#041}
 .hint{color:#a8a8b6;font-size:12px}
 
 /* list */
 .list{display:flex;flex-direction:column}
 .item{display:grid;grid-template-columns:auto 1fr auto;gap:10px;padding:12px;border-bottom:1px solid #1f1f26}
-@media (max-width:560px){.item{grid-template-columns:1fr;}}
+@media (max-width:560px){.item{grid-template-columns:1fr}}
 .badge{font-size:12px;border:1px solid #2b2b33;border-radius:999px;padding:4px 8px;color:#d8d8e2}
 .audio{width:100%}
 .time{color:#9aa;font-size:12px}
 .nowrap{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* star (favorite) */
+/* favorite */
 .star{width:32px;height:32px;border-radius:10px;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;cursor:pointer}
 .star.active{background:linear-gradient(180deg,#ffd54d,#ff9800);color:#000;border-color:#d68a00}
-.kv{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* loader */
+.loader{position:fixed;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--accent),transparent);transform:translateX(-100%);animation:load 1.2s linear infinite;display:none;z-index:10000}
+.show .loader{display:block}
+@keyframes load{to{transform:translateX(0)}}
+
+/* LOCK */
+.lock{position:fixed;inset:0;background:radial-gradient(900px 400px at 120% -10%,rgba(211,22,47,.08),transparent),#0b0b0d;display:grid;place-items:center;z-index:9999;padding:20px}
+.lock-card{width:min(420px,96vw);background:#101014;border:1px solid #23232a;border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.lock h1{margin:0 0 6px;font-size:20px}
+.lock p{margin:0 0 12px;color:#b9b9c4;font-size:13px}
+.lock .row{display:flex;gap:8px}
+.lock .err{color:#ff7b86;font-size:12px;margin-top:8px;min-height:1em}
+
+/* light theme (по желанию) */
+:root.light{--bg:#fafafa;--panel:#fff;--muted:#fafafa;--line:#e4e4ea;--text:#111;--sub:#444}
 </style>
 </head>
 <body>
+<div class="loader"></div>
+
+<!-- LOCK SCREEN -->
+<div id="lock" class="lock" hidden>
+  <div class="lock-card">
+    <h1>Вход</h1>
+    <p>Введите пароль, чтобы открыть плеер</p>
+    <div class="row">
+      <input id="lockPass" type="password" placeholder="Пароль" autocomplete="current-password">
+      <button class="btn good" id="lockBtn">Открыть</button>
+    </div>
+    <div class="err" id="lockErr"></div>
+    <p class="hint">Подсказка: пароль знают только участники группы.</p>
+  </div>
+</div>
+
 <div class="container">
   <header class="header">
     <div class="brand">
@@ -64,7 +98,7 @@ textarea{min-height:72px;resize:vertical}
     </div>
     <div class="kv">
       <span id="userRole" class="hint">Гость</span>
-      <button class="btn muted" id="signBtn">Войти</button>
+      <button class="btn muted" id="signBtn">Заблокировать</button>
     </div>
   </header>
 
@@ -82,14 +116,8 @@ textarea{min-height:72px;resize:vertical}
       <div class="body">
         <div class="row">
           <input id="q" type="text" placeholder="Поиск: название, теги, тональность, bpm…">
-          <select id="tagFilter">
-            <option value="">Все теги</option>
-            <option>riff</option><option>idea</option><option>demo</option><option>mix</option><option>live</option><option>import</option>
-          </select>
-          <select id="sortBy">
-            <option value="date">Сначала новые</option>
-            <option value="title">По названию</option>
-          </select>
+          <select id="tagFilter"><option value="">Все теги</option><option>riff</option><option>idea</option><option>demo</option><option>mix</option><option>live</option><option>import</option></select>
+          <select id="sortBy"><option value="date">Сначала новые</option><option value="title">По названию</option></select>
           <button class="btn muted" id="exportBtn">Экспорт</button>
           <input type="file" id="importFile" accept="application/json" hidden>
           <button class="btn ghost" id="importBtn">Импорт</button>
@@ -115,7 +143,7 @@ textarea{min-height:72px;resize:vertical}
         <textarea id="notes" placeholder="Заметки (структура, инструменты, идеи)"></textarea>
         <div class="row"><input id="file" type="file" accept="audio/*"></div>
         <div class="row" style="justify-content:space-between">
-          <span class="hint">Файл → Supabase Storage, метаданные → БД. Локальная копия для офлайна.</span>
+          <span class="hint">Файл → Supabase Storage, метаданные → БД. Локальная копия — для офлайна.</span>
           <button class="btn" id="addBtn">Добавить</button>
         </div>
       </div>
@@ -126,9 +154,7 @@ textarea{min-height:72px;resize:vertical}
   <section class="screen" id="screenFav" style="display:none">
     <div class="card">
       <h2>Избранное</h2>
-      <div class="body">
-        <div class="list" id="favList"></div>
-      </div>
+      <div class="body"><div class="list" id="favList"></div></div>
     </div>
   </section>
 
@@ -139,12 +165,12 @@ textarea{min-height:72px;resize:vertical}
       <div class="body">
         <div class="row">
           <label class="hint">Скорость воспроизведения</label>
-          <select id="playbackRate">
-            <option value="1">1.0×</option>
-            <option value="1.25">1.25×</option>
-            <option value="1.5">1.5×</option>
-            <option value="2">2×</option>
-          </select>
+          <select id="playbackRate"><option value="1">1.0×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select>
+        </div>
+        <div class="row">
+          <label class="hint"><input type="checkbox" id="autoSync"> Авто-синк при запуске</label>
+          <label class="hint">Тема</label>
+          <select id="theme"><option value="dark">Тёмная</option><option value="light">Светлая</option></select>
         </div>
         <div class="row">
           <button class="btn muted" id="refreshBtn">Обновить каталог</button>
@@ -165,8 +191,43 @@ textarea{min-height:72px;resize:vertical}
 const SUPABASE_URL  = "https://acjoymwoecbknquonsre.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjam95bXdvZWNia25xdW9uc3JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2MzExMjIsImV4cCI6MjA3NDIwNzEyMn0.9lxvRik9dt6IZLLuN_HVOoK63v_cBKnNqdKkAJ4TTVo";
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-async function ensureAnon(){const {data:{user}}=await supabase.auth.getUser(); if(!user) await supabase.auth.signInAnonymously();}
-ensureAnon();
+async function ensureAnon(){ const {data:{user}}=await supabase.auth.getUser(); if(!user) await supabase.auth.signInAnonymously(); }
+
+/* ===== Simple password gate (BW-2025) ===== */
+const APP_PASS_SHA256 = '2e9aa04c95b84f917635fe6dd59e6b99654d42a4457035443b0e04cabcce4eaa'; // sha256("BW-2025")
+async function sha256Hex(s){ const b=new TextEncoder().encode(s); const h=await crypto.subtle.digest('SHA-256',b); return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join(''); }
+function isUnlocked(){ return sessionStorage.getItem('bw_unlocked')==='1' }
+function setUnlocked(v){ v?sessionStorage.setItem('bw_unlocked','1'):sessionStorage.removeItem('bw_unlocked') }
+function showLock(on){ document.getElementById('lock').hidden=!on }
+window.addEventListener('DOMContentLoaded',()=>{
+  const btn=byId('lockBtn'), inp=byId('lockPass'), err=byId('lockErr');
+  btn.onclick = async ()=>{
+    err.textContent='';
+    if(await sha256Hex(inp.value||'')===APP_PASS_SHA256){
+      setUnlocked(true); showLock(false); ensureAnon(); boot(); // запуск
+    }else{ err.textContent='Неверный пароль'; inp.select(); }
+  };
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter') btn.click() });
+});
+
+/* ===== Helpers/UI state ===== */
+const els={tabCatalog:byId('tabCatalog'),tabUpload:byId('tabUpload'),tabFav:byId('tabFav'),tabSettings:byId('tabSettings'),
+  screenCatalog:byId('screenCatalog'),screenUpload:byId('screenUpload'),screenFav:byId('screenFav'),screenSettings:byId('screenSettings'),
+  list:byId('list'),favList:byId('favList'),
+  q:byId('q'),tagFilter:byId('tagFilter'),sortBy:byId('sortBy'),
+  title:byId('title'),tag:byId('tag'),key:byId('key'),bpm:byId('bpm'),notes:byId('notes'),file:byId('file'),
+  addBtn:byId('addBtn'),exportBtn:byId('exportBtn'),importBtn:byId('importBtn'),importFile:byId('importFile'),
+  userRole:byId('userRole'),signBtn:byId('signBtn'),playbackRate:byId('playbackRate'),
+  refreshBtn:byId('refreshBtn'), clearBtn:byId('clearBtn'), subtitle:byId('subtitle'),
+  autoSync:byId('autoSync'), theme:byId('theme')
+};
+const state={list:[],q:'',filterTag:'',sortBy:'date',view:'catalog',rate:parseFloat(localStorage.getItem('bw_rate')||'1')};
+els.playbackRate.value=String(state.rate);
+
+function byId(id){return document.getElementById(id)}
+function busy(on){ document.body.classList.toggle('show', !!on) }
+function applyTheme(){ document.documentElement.classList.toggle('light', localStorage.getItem('bw_theme')==='light'); }
+els.theme.value = localStorage.getItem('bw_theme') || 'dark'; applyTheme();
 
 /* ===== IndexedDB ===== */
 const DB='bw-player-db', STORE='tracks';
@@ -175,31 +236,13 @@ async function dbReadAll(){const db=await idb();return new Promise((res,rej)=>{c
 async function dbPut(o){const db=await idb();return new Promise((res,rej)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(o);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);});}
 async function dbDelete(id){const db=await idb();return new Promise((res,rej)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(id);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);});}
 
-/* ===== Auth по коду ===== */
-const INVITE_CODE='BW-2025';
-const localAuth={get role(){return localStorage.getItem('bw_role')||'guest'},signIn(c){if(c===INVITE_CODE){localStorage.setItem('bw_role','member');return true}return false},signOut(){localStorage.removeItem('bw_role')}};
-
 /* ===== Favorites ===== */
 function favSet(){return new Set(JSON.parse(localStorage.getItem('bw_favs')||'[]'))}
 function favSave(set){localStorage.setItem('bw_favs',JSON.stringify([...set]))}
 function favHas(id){return favSet().has(id)}
 function favToggle(id){const s=favSet(); s.has(id)?s.delete(id):s.add(id); favSave(s); render(); renderFav();}
 
-/* ===== UI state ===== */
-const els={
-  tabCatalog:byId('tabCatalog'), tabUpload:byId('tabUpload'), tabFav:byId('tabFav'), tabSettings:byId('tabSettings'),
-  screenCatalog:byId('screenCatalog'), screenUpload:byId('screenUpload'), screenFav:byId('screenFav'), screenSettings:byId('screenSettings'),
-  list:byId('list'), favList:byId('favList'),
-  q:byId('q'), tagFilter:byId('tagFilter'), sortBy:byId('sortBy'),
-  title:byId('title'), tag:byId('tag'), key:byId('key'), bpm:byId('bpm'), notes:byId('notes'), file:byId('file'),
-  addBtn:byId('addBtn'), exportBtn:byId('exportBtn'), importBtn:byId('importBtn'), importFile:byId('importFile'),
-  userRole:byId('userRole'), signBtn:byId('signBtn'), playbackRate:byId('playbackRate'),
-  refreshBtn:byId('refreshBtn'), clearBtn:byId('clearBtn'), subtitle:byId('subtitle')
-};
-const state={list:[], q:'', filterTag:'', sortBy:'date', view:'catalog', rate:parseFloat(localStorage.getItem('bw_rate')||'1')};
-els.playbackRate.value=String(state.rate);
-
-function byId(id){return document.getElementById(id)}
+/* ===== Render & Views ===== */
 function switchView(v){
   state.view=v; ['Catalog','Upload','Fav','Settings'].forEach(k=>els['tab'+k].classList.toggle('active', v.toLowerCase()===k.toLowerCase()));
   els.screenCatalog.style.display = v==='catalog'?'':'none';
@@ -215,9 +258,8 @@ els.tabFav.onclick    =()=>{renderFav(); switchView('fav');}
 els.tabSettings.onclick=()=>switchView('settings');
 
 function escapeHtml(s){return (s||'').replace(/[&<>\"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
-function ext(name){const i=(name||'').lastIndexOf('.');return i>=0?name.slice(i):'.mp3'}
+function ext(name){const i=(name||'').lastIndexOf('.');return i>=0?n ame.slice(i):'.mp3'}
 
-/* ===== Render ===== */
 function render(){
   const q=state.q.toLowerCase(), tag=state.filterTag, sort=state.sortBy;
   let items = state.list.filter(t=>(!tag||t.tag===tag)&&(!q|| (t.title||'').toLowerCase().includes(q)||(t.notes||'').toLowerCase().includes(q)||(t.keySig||'').toLowerCase().includes(q)||(''+t.bpm).includes(q)||(t.tag||'').includes(q)));
@@ -232,7 +274,7 @@ function renderFav(){
   for(const t of items) els.favList.appendChild(renderItem(t,true));
   applyPlaybackRate();
 }
-function renderItem(t, inFav=false){
+function renderItem(t,inFav=false){
   const row=document.createElement('div'); row.className='item';
   row.innerHTML=`
     <div class="star ${favHas(t.id)?'active':''}" title="Избранное" data-act="fav">★</div>
@@ -246,89 +288,117 @@ function renderItem(t, inFav=false){
     </div>
     <div class="kv">
       <button class="btn muted" data-act="download">Скачать</button>
+      <button class="btn" data-act="rmcloud">Удалить из облака</button>
       <button class="btn ghost" data-act="delete">Удалить локально</button>
     </div>`;
   row.querySelector('[data-act="fav"]').onclick = ()=> favToggle(t.id);
   row.querySelector('[data-act="download"]').onclick=()=> downloadBlob(t.blob||null,(t.title||'track')+ext(t.fileName));
   row.querySelector('[data-act="delete"]').onclick=async()=>{ if(confirm('Удалить локальную копию?')){ await dbDelete(t.id); await load(); if(inFav) renderFav(); } };
+  row.querySelector('[data-act="rmcloud"]').onclick=async()=>{
+    if(!confirm('Точно удалить из облака и каталога у всех?')) return;
+    try{ busy(true); await deleteTrack(t); if(inFav) renderFav(); }catch(e){ alert('Ошибка удаления: '+e.message); } finally{ busy(false); }
+  };
   return row;
 }
-function applyPlaybackRate(){ document.querySelectorAll('audio').forEach(a=>{ a.playbackRate=state.rate; }); }
+function applyPlaybackRate(){ document.querySelectorAll('audio').forEach(a=>a.playbackRate=state.rate); }
 
-/* ===== Supabase: upload / fetch ===== */
+/* ===== Supabase: upload / fetch / delete ===== */
 async function uploadToSupabase(item,file){
   const {data:{user}}=await supabase.auth.getUser(); const uid=user?.id||'anon';
   const path=`${uid}/${Date.now()}_${file.name}`;
+  busy(true);
   const up=await supabase.storage.from('tracks').upload(path,file,{cacheControl:'3600',upsert:false,contentType:file.type||'audio/mpeg'});
-  if(up.error) throw up.error;
+  if(up.error){ busy(false); throw up.error; }
   const pub=supabase.storage.from('tracks').getPublicUrl(path).data.publicUrl;
   const row={id:item.id,title:item.title||'',tag:item.tag||'idea',key_sig:item.keySig||'',bpm:item.bpm||'',notes:item.notes||'',file_path:path};
-  const ins=await supabase.from('tracks').insert(row); if(ins.error) throw ins.error;
-  return {...row,url:pub,created:Date.now()};
+  const ins=await supabase.from('tracks').insert(row); busy(false);
+  if(ins.error) throw ins.error;
+  return {...row,url:pub,created:Date.now(),cloudPath:path,fileName:file.name};
 }
 async function initialFetch(){
+  busy(true);
   const q=await supabase.from('tracks').select('*').order('created_at',{ascending:false});
   const list=(q.data||[]).map(x=>{
     const url=supabase.storage.from('tracks').getPublicUrl(x.file_path).data.publicUrl;
-    return {id:x.id,title:x.title,tag:x.tag,keySig:x.key_sig,bpm:x.bpm,notes:x.notes,url,created:new Date(x.created_at).getTime()};
+    return {id:x.id,title:x.title,tag:x.tag,keySig:x.key_sig,bpm:x.bpm,notes:x.notes,url,created:new Date(x.created_at).getTime(),cloudPath:x.file_path,file_path:x.file_path};
   });
-  state.list=list; render();
+  state.list=list; busy(false); render();
 }
 function subscribeRealtime(){
   supabase.channel('bw-tracks')
   .on('postgres_changes',{event:'INSERT',schema:'public',table:'tracks'},p=>{
     const x=p.new; const url=supabase.storage.from('tracks').getPublicUrl(x.file_path).data.publicUrl;
-    state.list=[{id:x.id,title:x.title,tag:x.tag,keySig:x.key_sig,bpm:x.bpm,notes:x.notes,url,created:new Date(x.created_at).getTime()},...state.list];
-    if(state.view==='catalog' || state.view==='fav') { render(); renderFav(); }
+    state.list=[{id:x.id,title:x.title,tag:x.tag,keySig:x.key_sig,bpm:x.bpm,notes:x.notes,url,created:new Date(x.created_at).getTime(),cloudPath:x.file_path,file_path:x.file_path},...state.list];
+    if(state.view==='catalog' || state.view==='fav'){ render(); renderFav(); }
   }).subscribe();
+}
+async function deleteTrack(t){
+  const path = t.cloudPath || t.file_path;
+  if(path){ const rm=await supabase.storage.from('tracks').remove([path]); if(rm.error && rm.error.message!=='Object not found') throw rm.error; }
+  const del=await supabase.from('tracks').delete().eq('id',t.id); if(del.error) throw del.error;
+  await dbDelete(t.id);
+  await initialFetch();  // чтобы после F5 не вернулось
+  await load();
 }
 
 /* ===== Handlers ===== */
-function updateAuthUI(){ els.userRole.textContent=localAuth.role==='member'?'Участник':'Гость'; els.signBtn.textContent=localAuth.role==='member'?'Выйти':'Войти'; }
-els.signBtn.onclick=()=>{ if(localAuth.role==='member'){localAuth.signOut();updateAuthUI();return} const code=prompt('Код приглашения:'); if(code&&localAuth.signIn(code.trim())){updateAuthUI(); alert('Готово! Можно загружать.');} else alert('Неверный код.'); };
+els.signBtn.onclick=()=>{ if(confirm('Заблокировать плеер?')){ setUnlocked(false); location.reload(); } };
+els.userRole.textContent = 'Участник';
 
 els.addBtn.onclick=async()=>{
-  if(localAuth.role!=='member'){alert('Нужен код участника (кнопка «Войти»).'); return;}
   const f=els.file.files[0]; if(!f){alert('Выбери аудиофайл'); return;}
   const item={id:crypto.randomUUID(),title:els.title.value.trim(),tag:els.tag.value,keySig:els.key.value.trim(),bpm:els.bpm.value.trim(),notes:els.notes.value.trim()};
   try{
-    await uploadToSupabase(item,f);
+    const cloud=await uploadToSupabase(item,f);
     const arr=await f.arrayBuffer(); const blob=new Blob([arr],{type:f.type||'audio/mpeg'}); const urlLocal=URL.createObjectURL(blob);
-    await dbPut({...item,blob,url:urlLocal,created:Date.now(),fileName:f.name});
+    await dbPut({...item,blob,url:urlLocal,created:Date.now(),fileName:f.name,cloudPath:cloud.cloudPath});
     els.title.value=els.key.value=els.bpm.value=els.notes.value=''; els.file.value='';
     switchView('catalog'); await load();
   }catch(e){console.error(e); alert('Ошибка загрузки: '+e.message);}
 };
-
 els.q.oninput = ()=>{state.q=els.q.value; render();}
 els.tagFilter.oninput = ()=>{state.filterTag=els.tagFilter.value; render();}
 els.sortBy.oninput = ()=>{state.sortBy=els.sortBy.value; render();}
-
 els.exportBtn.onclick=async()=>{
   const data=await dbReadAll();
-  const items=await Promise.all(data.map(async t=>{ const buf=await t.blob.arrayBuffer(); const b64=btoa(String.fromCharCode(...new Uint8Array(buf))); return {...t, blob:undefined, url:undefined, base64:b64, mime:'audio/mpeg'}; }));
-  const file=new Blob([JSON.stringify({version:1,exported:Date.now(),items})],{type:'application/json'});
-  downloadBlob(file,`bw_export_${new Date().toISOString().slice(0,10)}.json`);
+  const items=await Promise.all(data.map(async t=>{const buf=await t.blob.arrayBuffer().catch(()=>new ArrayBuffer(0));const b64=btoa(String.fromCharCode(...new Uint8Array(buf)));return {...t,blob:undefined,url:undefined,base64:b64,mime:'audio/mpeg'};}));
+  const file=new Blob([JSON.stringify({version:1,exported:Date.now(),items})],{type:'application/json'}); downloadBlob(file,`bw_export_${new Date().toISOString().slice(0,10)}.json`);
 };
 els.importBtn.onclick=()=>els.importFile.click();
 els.importFile.onchange=async()=>{
   const f=els.importFile.files[0]; if(!f) return;
   try{const data=JSON.parse(await f.text());
-    for(const t of data.items||[]){const bin=Uint8Array.from(atob(t.base64),c=>c.charCodeAt(0));const blob=new Blob([bin],{type:t.mime||'audio/mpeg'}); const url=URL.createObjectURL(blob); await dbPut({...t,blob,url});}
+    for(const t of data.items||[]){const bin=Uint8Array.from(atob(t.base64||''),c=>c.charCodeAt(0));const blob=new Blob([bin],{type:t.mime||'audio/mpeg'});const url=URL.createObjectURL(blob);await dbPut({...t,blob,url});}
     await load(); alert('Импортировано.');
-  }catch(e){alert('Ошибка импорта: '+e.message)}
-  els.importFile.value='';
+  }catch(e){alert('Ошибка импорта: '+e.message)} els.importFile.value='';
 };
-
 els.playbackRate.oninput=()=>{ state.rate=parseFloat(els.playbackRate.value); localStorage.setItem('bw_rate',String(state.rate)); applyPlaybackRate(); };
-els.refreshBtn.onclick=()=>initialFetch();
+els.refreshBtn.onclick=async()=>{
+  await initialFetch();
+  const ids=new Set(state.list.map(t=>t.id));
+  const local=await dbReadAll(); for(const t of local) if(!ids.has(t.id)) await dbDelete(t.id);
+  await load(); alert('Каталог обновлён');
+};
 els.clearBtn.onclick=async()=>{ if(confirm('Удалить все локальные копии?')){ const db=await idb(); db.close(); indexedDB.deleteDatabase(DB); await load(); alert('Готово.'); } };
+els.autoSync.checked = localStorage.getItem('bw_autosync')==='1';
+els.autoSync.onchange = ()=> localStorage.setItem('bw_autosync', els.autoSync.checked?'1':'0');
+els.theme.oninput = ()=>{ localStorage.setItem('bw_theme', els.theme.value); applyTheme(); };
 
-function downloadBlob(blob,name){ if(!blob){alert('Локальной копии нет. Скачай по ссылке из плеера.'); return } const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); }
+function downloadBlob(blob,name){ if(!blob){alert('Локальной копии нет. Скачай по ссылке из плеера.'); return } const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000); }
 async function load(){ state.list=await dbReadAll(); render(); }
 
-/* init */
-updateAuthUI(); switchView('catalog'); load(); initialFetch(); subscribeRealtime();
+/* ===== Boot ===== */
+async function boot(){
+  updateAuthUI(); switchView('catalog');
+  await load();
+  if(localStorage.getItem('bw_autosync')==='1'){ await initialFetch(); }
+  subscribeRealtime();
+}
+function updateAuthUI(){ els.userRole.textContent='Участник'; }
+
+(async()=>{
+  if(!isUnlocked()){ showLock(true); } else { showLock(false); ensureAnon(); boot(); }
+})();
 </script>
 </body>
 </html>
