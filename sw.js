@@ -1,5 +1,5 @@
 // sw.js — минимальный, безопасный кэш
-const CACHE = 'bw-cache-v7'; // меняй v1 → v2 при каждом релизе
+const CACHE = 'bw-cache-v9'; // меняй v1 → v2 при каждом релизе
 
 const ASSETS = [
   './',
