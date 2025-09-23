@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Bleeding Wounds — Player</title>
 <meta name="theme-color" content="#0b0b0d"/>
-<link rel="manifest" href="manifest.webmanifest?v=7">
+<link rel="manifest" href="manifest.webmanifest?v=9">
 <link rel="icon" href="icons/bw-192.png" sizes="192x192">
 <link rel="icon" href="icons/bw-512.png" sizes="512x512">
 
@@ -257,9 +257,10 @@ els.tabUpload.onclick =()=>switchView('upload');
 els.tabFav.onclick    =()=>{renderFav(); switchView('fav');}
 els.tabSettings.onclick=()=>switchView('settings');
 
-function escapeHtml(s){return (s||'').replace(/[&<>\"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
-function ext(name){const i=(name||'').lastIndexOf('.');return i>=0?n ame.slice(i):'.mp3'}
-
+function ext(name){
+  const i = (name || '').lastIndexOf('.');
+  return i >= 0 ? name.slice(i) : '.mp3';
+}
 function render(){
   const q=state.q.toLowerCase(), tag=state.filterTag, sort=state.sortBy;
   let items = state.list.filter(t=>(!tag||t.tag===tag)&&(!q|| (t.title||'').toLowerCase().includes(q)||(t.notes||'').toLowerCase().includes(q)||(t.keySig||'').toLowerCase().includes(q)||(''+t.bpm).includes(q)||(t.tag||'').includes(q)));
