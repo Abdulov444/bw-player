@@ -9,21 +9,15 @@
   <link rel="icon" href="icons/bw-192.png" sizes="192x192">
   <link rel="icon" href="icons/bw-512.png" sizes="512x512">
   <style>
-    :root{
-      --bg:#0b0b0d;--card:#121216;--muted:#1b1b21;--text:#f2f2f7;--sub:#b9b9c4;--accent:#d3162f;--accent-2:#8f0f22;--ok:#1fb980;--warn:#ffb020;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    :root{--bg:#0b0b0d;--muted:#1b1b21;--text:#f2f2f7;--sub:#b9b9c4;--accent:#d3162f;--accent-2:#8f0f22;--ok:#1fb980}
+    *{box-sizing:border-box} html,body{height:100%}
     body{margin:0;background:radial-gradient(1200px 600px at 120% -10%,rgba(211,22,47,.08),transparent),
       radial-gradient(800px 400px at -10% 10%,rgba(211,22,47,.06),transparent),var(--bg);
-      color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
-    }
+      color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif}
     .container{max-width:980px;margin:0 auto;padding:18px}
     .header{display:flex;gap:14px;align-items:center;justify-content:space-between}
     .brand{display:flex;gap:12px;align-items:center}
-    .logo{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent) 0%, #3b0d14 100%);box-shadow:0 6px 20px rgba(211,22,47,.35)}
-    .logo span{font-weight:900;letter-spacing:.5px}
-    .title{line-height:1}
+    .logo{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),#3b0d14);box-shadow:0 6px 20px rgba(211,22,47,.35)}
     .title h1{margin:0;font-size:20px;font-weight:800;letter-spacing:.6px}
     .title p{margin:2px 0 0;color:var(--sub);font-size:12px}
     .pill{background:linear-gradient(180deg,var(--muted),#0f0f12);border:1px solid #24242b;border-radius:999px;padding:8px 12px;color:var(--sub);display:inline-flex;gap:8px;align-items:center}
@@ -41,17 +35,9 @@
     .btn.ghost{background:transparent;color:var(--sub);border:1px dashed #2a2a32}
     .list{display:flex;flex-direction:column}
     .item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;padding:12px 14px;border-bottom:1px solid #22222a}
-    .item:hover{background:rgba(255,255,255,.02)}
     .badge{padding:4px 8px;border-radius:999px;border:1px solid #2d2d36;color:#cfcfdb;font-size:12px}
-    .time{color:#9aa; font-size:12px}
-    .search{display:flex;gap:10px}
-    .tags{display:flex;gap:8px;flex-wrap:wrap}
-    .nowrap{white-space:nowrap}
-    .footer{display:flex;gap:8px;justify-content:space-between;align-items:center}
-    .audio{width:100%}
+    .time{color:#9aa;font-size:12px}
     .hint{color:#a8a8b6;font-size:12px}
-    .danger{color:#ff6b6b}
-    .ok{color:var(--ok)}
   </style>
 </head>
 <body>
@@ -61,7 +47,7 @@
         <div class="logo"><span>BW</span></div>
         <div class="title">
           <h1>Bleeding Wounds — Player</h1>
-          <p>Внутренний плеер/склад наработок • офлайн + PWA</p>
+          <p>Внутренний плеер/склад наработок • офлайн + PWA + Supabase</p>
         </div>
       </div>
       <div class="pill" id="authPill">
@@ -74,19 +60,14 @@
       <div class="card">
         <h2>Наработки</h2>
         <div class="body">
-          <div class="search">
-            <input id="q" type="text" placeholder="Поиск: название, теги, тональность, bpm…" />
+          <div class="row">
+            <input id="q" type="text" placeholder="Поиск: название, теги, тональность, bpm…"/>
             <select id="tagFilter">
-              <option value="">Все теги</option>
-              <option>riff</option>
-              <option>idea</option>
-              <option>demo</option>
-              <option>mix</option>
-              <option>live</option>
+              <option value="">Все теги</option><option>riff</option><option>idea</option><option>demo</option><option>mix</option><option>live</option>
             </select>
-            <button class="btn muted" id="exportBtn" title="Экспорт локальной базы">Экспорт</button>
+            <button class="btn muted" id="exportBtn">Экспорт</button>
             <input type="file" id="importFile" accept="application/json" hidden />
-            <button class="btn ghost" id="importBtn" title="Импорт из JSON">Импорт</button>
+            <button class="btn ghost" id="importBtn">Импорт</button>
           </div>
           <div class="list" id="list"></div>
         </div>
@@ -97,252 +78,183 @@
         <div class="body">
           <div class="row">
             <input id="title" type="text" placeholder="Название" />
-            <select id="tag">
-              <option>riff</option>
-              <option>idea</option>
-              <option>demo</option>
-              <option>mix</option>
-              <option>live</option>
-            </select>
+            <select id="tag"><option>riff</option><option>idea</option><option>demo</option><option>mix</option><option>live</option></select>
           </div>
           <div class="row">
             <input id="key" type="text" placeholder="Тональность (напр. D# minor)" />
             <input id="bpm" type="text" placeholder="BPM (напр. 180)" />
           </div>
           <textarea id="notes" placeholder="Заметки (структура, инструменты, идеи)"></textarea>
-          <div class="row">
-            <input id="file" type="file" accept="audio/*" />
-          </div>
-          <div class="footer">
-            <span class="hint">Поддерживаются mp3/wav/ogg. Хранится локально (IndexedDB). Можно включить облако позже.</span>
+          <div class="row"><input id="file" type="file" accept="audio/*" /></div>
+          <div class="row" style="justify-content:space-between">
+            <span class="hint">Файлы идут в Supabase Storage (bucket <code>tracks</code>), метаданные — в БД. Локальная копия — для офлайна.</span>
             <button class="btn" id="addBtn">Добавить</button>
           </div>
         </div>
       </div>
     </section>
 
-    <p class="hint">Совет: добавьте на главный экран Android через «Меню → Добавить на экран» — приложение станет офлайн‑доступным. Синхронизация между участниками включается, если задать CLOUD_BACKEND (см. код).</p>
+    <p class="hint">Совет: установи на Android через «⋮ → Добавить на главный экран» — будет офлайн.</p>
   </div>
 
+  <!-- Service Worker -->
   <script>
-    // --- Register Service Worker (static) ---
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js');
-    }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
   </script>
 
+  <!-- Supabase (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
-    // --- Tiny IndexedDB wrapper ---
-    const DB_NAME = 'bw-player-db';
-    const STORE = 'tracks';
-    function idb(){
-      return new Promise((res,rej)=>{
-        const r = indexedDB.open(DB_NAME,1);
-        r.onupgradeneeded = ()=>{
-          const db = r.result;
-          const s = db.createObjectStore(STORE,{keyPath:'id'});
-          s.createIndex('by_title','title');
-          s.createIndex('by_tag','tag');
-        };
-        r.onerror = ()=>rej(r.error);
-        r.onsuccess = ()=>res(r.result);
-      });
-    }
-    async function dbReadAll(){
-      const db = await idb();
-      return new Promise((res,rej)=>{
-        const tx = db.transaction(STORE,'readonly');
-        const s = tx.objectStore(STORE);
-        const req = s.getAll();
-        req.onsuccess = ()=>res(req.result.sort((a,b)=>b.created-a.created));
-        req.onerror = ()=>rej(req.error);
-      })
-    }
-    async function dbPut(obj){
-      const db = await idb();
-      return new Promise((res,rej)=>{
-        const tx = db.transaction(STORE,'readwrite');
-        tx.objectStore(STORE).put(obj);
-        tx.oncomplete = ()=>res();
-        tx.onerror = ()=>rej(tx.error);
-      })
-    }
-    async function dbDelete(id){
-      const db = await idb();
-      return new Promise((res,rej)=>{
-        const tx = db.transaction(STORE,'readwrite');
-        tx.objectStore(STORE).delete(id);
-        tx.oncomplete = ()=>res();
-        tx.onerror = ()=>rej(tx.error);
-      })
-    }
+    // ====== ИНИЦИАЛИЗАЦИЯ SUPABASE ======
+    const SUPABASE_URL  = "https://acjoymwoecbknquonsre.supabase.co";      // ← твой URL
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjam95bXdvZWNia25xdW9uc3JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2MzExMjIsImV4cCI6MjA3NDIwNzEyMn0.9lxvRik9dt6IZLLuN_HVOoK63v_cBKnNqdKkAJ4TTVo"; // ← твой anon key
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    // --- Auth (очень простой, для приватной группы) ---
-    const INVITE_CODE = 'BW-2025';
-    const auth = {
+    async function ensureAnon(){
+      const { data:{ user } } = await supabase.auth.getUser();
+      if(!user) await supabase.auth.signInAnonymously();
+    }
+    ensureAnon();
+
+    // ====== INDEXEDDB для офлайна ======
+    const DB_NAME = 'bw-player-db', STORE = 'tracks';
+    function idb(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DB_NAME,1);
+      r.onupgradeneeded=()=>{const db=r.result; const s=db.createObjectStore(STORE,{keyPath:'id'}); s.createIndex('by_tag','tag');};
+      r.onerror=()=>rej(r.error); r.onsuccess=()=>res(r.result); }); }
+    async function dbReadAll(){ const db=await idb(); return new Promise((res,rej)=>{ const tx=db.transaction(STORE,'readonly'); const s=tx.objectStore(STORE); const req=s.getAll(); req.onsuccess=()=>res(req.result.sort((a,b)=>b.created-a.created)); req.onerror=()=>rej(req.error); });}
+    async function dbPut(obj){ const db=await idb(); return new Promise((res,rej)=>{ const tx=db.transaction(STORE,'readwrite'); tx.objectStore(STORE).put(obj); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); });}
+    async function dbDelete(id){ const db=await idb(); return new Promise((res,rej)=>{ const tx=db.transaction(STORE,'readwrite'); tx.objectStore(STORE).delete(id); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); });}
+
+    // ====== ЛОКАЛЬНЫЙ «КОД ПРИГЛАШЕНИЯ» ======
+    const INVITE_CODE='BW-2025';
+    const localAuth = {
       get role(){ return localStorage.getItem('bw_role') || 'guest' },
-      signIn(code){ if(code===INVITE_CODE){ localStorage.setItem('bw_role','member'); return true } return false },
+      signIn(code){ if(code===INVITE_CODE){ localStorage.setItem('bw_role','member'); return true } return false; },
       signOut(){ localStorage.removeItem('bw_role') }
-    }
-
-    // --- State ---
-    const state = { list: [], filterTag: '', q: '' };
-
-    // --- Elements ---
-    const els = {
-      list: document.getElementById('list'),
-      q: document.getElementById('q'),
-      tagFilter: document.getElementById('tagFilter'),
-      title: document.getElementById('title'),
-      tag: document.getElementById('tag'),
-      key: document.getElementById('key'),
-      bpm: document.getElementById('bpm'),
-      notes: document.getElementById('notes'),
-      file: document.getElementById('file'),
-      addBtn: document.getElementById('addBtn'),
-      userRole: document.getElementById('userRole'),
-      signBtn: document.getElementById('signBtn'),
-      exportBtn: document.getElementById('exportBtn'),
-      importBtn: document.getElementById('importBtn'),
-      importFile: document.getElementById('importFile'),
     };
 
-    // --- Render list ---
+    // ====== UI ======
+    const els = {
+      list:document.getElementById('list'), q:document.getElementById('q'), tagFilter:document.getElementById('tagFilter'),
+      title:document.getElementById('title'), tag:document.getElementById('tag'), key:document.getElementById('key'),
+      bpm:document.getElementById('bpm'), notes:document.getElementById('notes'), file:document.getElementById('file'),
+      addBtn:document.getElementById('addBtn'), userRole:document.getElementById('userRole'), signBtn:document.getElementById('signBtn'),
+      exportBtn:document.getElementById('exportBtn'), importBtn:document.getElementById('importBtn'), importFile:document.getElementById('importFile')
+    };
+    const state = { list:[], filterTag:'', q:'' };
+
+    function escapeHtml(s){ return (s||'').replace(/[&<>\"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c])) }
+    function extractExt(name){ const i=(name||'').lastIndexOf('.'); return i>=0?name.slice(i):'.mp3' }
+
     function render(){
-      const q = state.q.toLowerCase();
-      const tag = state.filterTag;
-      const items = state.list.filter(t=>
-        (!tag || t.tag===tag) && (
-          !q || (t.title?.toLowerCase().includes(q) || t.notes?.toLowerCase().includes(q) || (t.keySig||'').toLowerCase().includes(q) || (''+t.bpm).includes(q) || t.tag.toLowerCase().includes(q))
-        )
-      );
-      els.list.innerHTML = '';
-      if(!items.length){ els.list.innerHTML = `<div class="body hint">Пусто. Загрузите файл или снимите фильтры.</div>`; return }
+      const q=state.q.toLowerCase(), tag=state.filterTag;
+      const items=state.list.filter(t=>(!tag||t.tag===tag) && (!q || (t.title||'').toLowerCase().includes(q) || (t.notes||'').toLowerCase().includes(q) || (t.keySig||'').toLowerCase().includes(q) || (''+t.bpm).includes(q) || (t.tag||'').includes(q)));
+      els.list.innerHTML = items.length? '' : `<div class="body hint">Пусто. Загрузите файл или снимите фильтры.</div>`;
       for(const t of items){
-        const row = document.createElement('div');
-        row.className = 'item';
-        row.innerHTML = `
-          <div style="display:grid;place-items:center">
-            <span class="badge">${t.tag}</span>
-          </div>
+        const row=document.createElement('div'); row.className='item';
+        row.innerHTML=`
+          <div style="display:grid;place-items:center"><span class="badge">${t.tag||''}</span></div>
           <div>
             <div class="row" style="justify-content:space-between">
-              <div class="nowrap"><strong>${escapeHtml(t.title || 'Без названия')}</strong> <span class="time">• ${new Date(t.created).toLocaleString()}</span></div>
+              <div class="nowrap"><strong>${escapeHtml(t.title||'Без названия')}</strong> <span class="time">• ${new Date(t.created||Date.now()).toLocaleString()}</span></div>
               <div class="time">${t.keySig||''} ${t.bpm?(' • '+t.bpm+' bpm'):''}</div>
             </div>
             <div class="hint" style="margin:6px 0">${escapeHtml(t.notes||'')}</div>
             <audio class="audio" controls src="${t.url}"></audio>
-            <div class="tags" style="margin-top:8px">
-              ${(t.labels||[]).map(l=>`<span class='badge'>#${escapeHtml(l)}</span>`).join('')}
-            </div>
           </div>
           <div class="row" style="flex-direction:column">
             <button class="btn muted" data-act="download">Скачать</button>
             <button class="btn ghost" data-act="delete">Удалить</button>
-          </div>
-        `;
-        row.querySelector('[data-act="download"]').onclick = ()=> downloadBlob(t.blob, (t.title||'track')+extractExt(t.fileName));
-        row.querySelector('[data-act="delete"]').onclick = async ()=>{
-          if(confirm('Удалить наработку локально?')){ await dbDelete(t.id); await load(); }
-        }
+          </div>`;
+        row.querySelector('[data-act="download"]').onclick=()=> downloadBlob(t.blob || null, (t.title||'track')+extractExt(t.fileName));
+        row.querySelector('[data-act="delete"]').onclick=async()=>{ if(confirm('Удалить локально?')){ await dbDelete(t.id); await load(); } };
         els.list.appendChild(row);
       }
     }
 
-    function extractExt(name){
-      const i = (name||'').lastIndexOf('.');
-      return i>=0 ? (name.slice(i)) : '.mp3'
-    }
+    // ====== SUPABASE: загрузка и синхронизация ======
+    async function uploadToSupabase(item, file){
+      await ensureAnon();
+      const { data:{ user } } = await supabase.auth.getUser();
+      const path = `${user.id}/${Date.now()}_${file.name}`;
 
-    function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c])) }
+      const up = await supabase.storage.from('tracks').upload(path, file, {
+        cacheControl:'3600', upsert:false, contentType:file.type || 'audio/mpeg'
+      });
+      if(up.error) throw up.error;
 
-    // --- Add track ---
-    els.addBtn.onclick = async ()=>{
-      if(auth.role!=='member'){ alert('Только участники с кодом приглашения могут добавлять. Нажмите «Войти».'); return }
-      const f = els.file.files[0];
-      if(!f){ alert('Выберите аудиофайл'); return }
-      const arr = await f.arrayBuffer();
-      const blob = new Blob([arr],{type:f.type||'audio/mpeg'});
-      const url = URL.createObjectURL(blob);
-      const item = {
-        id: crypto.randomUUID(),
-        created: Date.now(),
-        title: els.title.value.trim(),
-        tag: els.tag.value,
-        keySig: els.key.value.trim(),
-        bpm: els.bpm.value.trim(),
-        notes: els.notes.value.trim(),
-        labels: [],
-        fileName: f.name,
-        blob, url
+      const { data:pub } = supabase.storage.from('tracks').getPublicUrl(path);
+      const publicUrl = pub.publicUrl;
+
+      const row = {
+        id:item.id, title:item.title||'', tag:item.tag||'idea', key_sig:item.keySig||'',
+        bpm:item.bpm||'', notes:item.notes||'', file_path:path
       };
-      await dbPut(item);
-      els.title.value = els.key.value = els.bpm.value = els.notes.value = '';
-      els.file.value='';
-      await load();
-      scrollTo({top:0,behavior:'smooth'});
+      const ins = await supabase.from('tracks').insert(row);
+      if(ins.error) throw ins.error;
+
+      return { ...row, url: publicUrl, created: Date.now() };
     }
 
-    // --- Search & filters ---
+    async function initialFetch(){
+      const q = await supabase.from('tracks').select('*').order('created_at',{ascending:false});
+      const list = (q.data||[]).map(x=>{
+        const url = supabase.storage.from('tracks').getPublicUrl(x.file_path).data.publicUrl;
+        return { id:x.id, title:x.title, tag:x.tag, keySig:x.key_sig, bpm:x.bpm, notes:x.notes, url, created: new Date(x.created_at).getTime() };
+      });
+      state.list = list; render();
+    }
+
+    function subscribeRealtime(){
+      supabase.channel('bw-tracks')
+        .on('postgres_changes',{event:'INSERT',schema:'public',table:'tracks'}, payload=>{
+          const x = payload.new;
+          const url = supabase.storage.from('tracks').getPublicUrl(x.file_path).data.publicUrl;
+          state.list = [{ id:x.id, title:x.title, tag:x.tag, keySig:x.key_sig, bpm:x.bpm, notes:x.notes, url, created:new Date(x.created_at).getTime() }, ...state.list];
+          render();
+        }).subscribe();
+    }
+
+    // ====== Handlers ======
+    function updateAuthUI(){ els.userRole.textContent = localAuth.role==='member' ? 'Участник' : 'Гость'; els.signBtn.textContent = localAuth.role==='member' ? 'Выйти' : 'Войти'; }
+    els.signBtn.onclick = ()=>{ if(localAuth.role==='member'){ localAuth.signOut(); updateAuthUI(); return } const code=prompt('Код приглашения:'); if(code && localAuth.signIn(code.trim())){ updateAuthUI(); alert('Вы — участник. Теперь можно загружать.'); } else alert('Неверный код.'); };
+
+    els.addBtn.onclick = async ()=>{
+      if(localAuth.role!=='member'){ alert('Нужен код участника (Войти).'); return }
+      const f = els.file.files[0]; if(!f){ alert('Выберите аудиофайл'); return }
+      const item = { id:crypto.randomUUID(), title:els.title.value.trim(), tag:els.tag.value, keySig:els.key.value.trim(), bpm:els.bpm.value.trim(), notes:els.notes.value.trim() };
+
+      try{
+        // 1) в облако
+        const cloud = await uploadToSupabase(item, f);
+
+        // 2) локальный офлайн-кеш
+        const arr = await f.arrayBuffer(); const blob = new Blob([arr],{type:f.type||'audio/mpeg'}); const urlLocal = URL.createObjectURL(blob);
+        await dbPut({ ...item, blob, url:urlLocal, created: Date.now(), fileName:f.name });
+
+        // очистка
+        els.title.value = els.key.value = els.bpm.value = els.notes.value = ''; els.file.value='';
+        scrollTo({top:0,behavior:'smooth'});
+      }catch(e){ console.error(e); alert('Ошибка загрузки: '+e.message); }
+    };
+
     els.q.oninput = ()=>{ state.q = els.q.value; render(); }
     els.tagFilter.oninput = ()=>{ state.filterTag = els.tagFilter.value; render(); }
-
-    // --- Auth button ---
-    function updateAuthUI(){
-      els.userRole.textContent = auth.role==='member' ? 'Участник' : 'Гость';
-      els.signBtn.textContent = auth.role==='member' ? 'Выйти' : 'Войти';
-    }
-    els.signBtn.onclick = ()=>{
-      if(auth.role==='member'){ auth.signOut(); updateAuthUI(); return }
-      const code = prompt('Код приглашения (получите у лидера группы):');
-      if(code && auth.signIn(code.trim())){ updateAuthUI(); alert('Готово! Вы — участник. Теперь можно загружать.'); }
-      else alert('Неверный код.');
-    }
-
-    // --- Export/Import local DB ---
     els.exportBtn.onclick = async ()=>{
       const data = await dbReadAll();
-      const items = await Promise.all(data.map(async t=>{
-        const buf = await t.blob.arrayBuffer();
-        const b64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
-        return {...t, blob: undefined, url: undefined, base64: b64, mime: t.blob?.type || 'audio/mpeg'}
-      }));
-      const file = new Blob([JSON.stringify({version:1, exported:Date.now(), items})],{type:'application/json'});
-      downloadBlob(file, `bw_export_${new Date().toISOString().slice(0,10)}.json`);
-    }
+      const items = await Promise.all(data.map(async t=>{ const buf = await t.blob.arrayBuffer(); const b64 = btoa(String.fromCharCode(...new Uint8Array(buf))); return {...t, blob:undefined, url:undefined, base64:b64, mime:'audio/mpeg'}; }));
+      const file = new Blob([JSON.stringify({version:1, exported:Date.now(), items})],{type:'application/json'}); downloadBlob(file, `bw_export_${new Date().toISOString().slice(0,10)}.json`);
+    };
     els.importBtn.onclick = ()=> els.importFile.click();
-    els.importFile.onchange = async ()=>{
-      const f = els.importFile.files[0]; if(!f) return;
-      const text = await f.text();
-      try{
-        const data = JSON.parse(text);
-        for(const t of data.items||[]){
-          const bin = Uint8Array.from(atob(t.base64), c=>c.charCodeAt(0));
-          const blob = new Blob([bin],{type:t.mime||'audio/mpeg'});
-          const url = URL.createObjectURL(blob);
-          await dbPut({...t, blob, url});
-        }
-        await load();
-        alert('Импортировано.');
-      }catch(e){ alert('Ошибка импорта: '+e.message) }
-      els.importFile.value='';
-    }
+    els.importFile.onchange = async ()=>{ const f=els.importFile.files[0]; if(!f) return; try{ const data=JSON.parse(await f.text()); for(const t of data.items||[]){ const bin=Uint8Array.from(atob(t.base64),c=>c.charCodeAt(0)); const blob=new Blob([bin],{type:t.mime||'audio/mpeg'}); const url=URL.createObjectURL(blob); await dbPut({...t, blob, url}); } await load(); alert('Импортировано.'); }catch(e){ alert('Ошибка импорта: '+e.message) } els.importFile.value=''; };
 
-    function downloadBlob(blob, name){
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob); a.download = name; a.click();
-      setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
-    }
+    function downloadBlob(blob,name){ if(!blob){ alert('Локальный файл не сохранён. Скачай из облака по кнопке в плеере.'); return } const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),5000); }
 
-    // --- Load all ---
     async function load(){ state.list = await dbReadAll(); render(); }
 
-    // Init
-    updateAuthUI();
-    load();
-
-    // --- Optional Cloud sync (шаблон) ---
-    // window.FIREBASE_CONFIG = { apiKey:"…", authDomain:"…", projectId:"…", storageBucket:"…", appId:"…" };
+    // init
+    updateAuthUI(); load(); initialFetch(); subscribeRealtime();
   </script>
 </body>
 </html>
