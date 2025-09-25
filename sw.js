@@ -1,5 +1,5 @@
-// sw.js — минимальный, безопасный кэш
-const CACHE = 'bw-cache-v11'; // меняй v1 → v2 при каждом релизе
+// sw.js — минимальный и безопасный
+const CACHE = 'bw-cache-v13'; // повышай номер при каждом релизе
 
 const ASSETS = [
   './',
@@ -10,10 +10,8 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
-  self.skipWaiting(); // сразу активируем новую версию
-  event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(ASSETS))
-  );
+  self.skipWaiting();
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS)));
 });
 
 self.addEventListener('activate', (event) => {
@@ -24,7 +22,6 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Простой cache-first: если файла нет в кэше — берём из сети (и он подтянется уже свежим)
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cached) => cached || fetch(event.request))
